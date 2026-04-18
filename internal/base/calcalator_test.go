@@ -12,5 +12,4 @@ func Test_Add(t *testing.T) {
 	expected := 5
 
 	assert.Equal(t, rsl, expected)
-
 }
