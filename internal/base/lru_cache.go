@@ -18,8 +18,7 @@ func (l *LruCache) Put(key string, value string) {
 		l.Tail = &newNode
 		return
 	}
-	var currentNode Node
-	currentNode = *l.Head
+	currentNode := *l.Head
 	currentNode.Prev = &newNode
 	newNode.Next = &currentNode
 	l.Head = &newNode
@@ -46,7 +45,7 @@ func (l *LruCache) Get(key string) *string {
 	if l.size == 0 || l.Head == nil {
 		return nil
 	}
-	var currentNode Node = *l.Head
+	currentNode := *l.Head
 	var res *string
 	for i := 0; i < l.size; i++ {
 		if currentNode.Key == key {
@@ -74,8 +73,7 @@ func (l *LruCache) Get(key string) *string {
 					l.Tail = prevNode
 				}
 				// в начало
-				var tmpNode *Node
-				tmpNode = l.Head
+				tmpNode := l.Head
 				tmpNode.Prev = &currentNode
 				currentNode.Prev = nil
 				currentNode.Next = tmpNode
