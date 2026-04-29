@@ -23,8 +23,13 @@ func NewTracker() *Tracker {
 	return &Tracker{}
 }
 
-func (t *Tracker) AddItem(item Item) {
+func (t *Tracker) AddItem(item Item) error {
+	_, ok := t.indexOf(item.ID)
+	if ok {
+		return ErrAlreadyExists
+	}
 	t.Items = append(t.Items, item)
+	return nil
 }
 
 func (t *Tracker) GetItems() []Item {
@@ -43,20 +48,22 @@ func (t *Tracker) DeleteItem(name string) {
 	fmt.Println("There is no item with this name")
 }
 
-func (t *Tracker) UpdateItem(name string, newName string) {
-	if !validate(newName) {
-		fmt.Println("the new name must not be empty")
-		return
+func (t *Tracker) UpdateItem(item Item) error {
+	index, ok := t.indexOf(item.ID)
+	if !ok {
+		return ErrNotFound
 	}
-	for i := 0; i < len(t.Items); i++ {
-		if t.Items[i].Name == name {
-			res := t.Items[i].toString()
-			t.Items[i].Name = newName
-			fmt.Printf("Item '%s' was updated: '%s'\n", res, newName)
-			return
+	t.Items[index] = item
+	return nil
+}
+
+func (t *Tracker) indexOf(id string) (int, bool) {
+	for i, item := range t.Items {
+		if item.ID == id {
+			return i, true
 		}
 	}
-	fmt.Println("There is no item with this name")
+	return -1, false
 }
 
 func (t *Tracker) FindItem(name string) {

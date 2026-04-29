@@ -19,9 +19,9 @@ type ConsoleInput struct {
 
 func (c ConsoleInput) Get() string {
 	scanner := bufio.NewScanner(os.Stdin)
-	//if scanner.Scan() {
-	//	// block ID
-	//}
+	if scanner.Scan() {
+		// block ID
+	}
 	return scanner.Text()
 }
 
