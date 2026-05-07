@@ -12,6 +12,7 @@ type Item struct {
 }
 
 func (i Item) toString() string {
+
 	return fmt.Sprintf("%s\t%s", i.ID, i.Name)
 }
 
@@ -79,8 +80,4 @@ func (t *Tracker) FindItem(name string) {
 	}
 	fmt.Printf("These items containing text %s: were found:\n", name)
 	fmt.Println(strings.Join(res, ",\n"))
-}
-
-func validate(name string) bool {
-	return strings.Trim(name, " ") != ""
 }
