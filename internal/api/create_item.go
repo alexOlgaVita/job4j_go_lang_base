@@ -11,6 +11,10 @@ type CreateItemRequest struct {
 	Name string `json:"name"`
 }
 
+type CreateItemResponse struct {
+	Item ItemRequest `json:"item"`
+}
+
 func (s *Server) CreateItem(c *fiber.Ctx) error {
 	var req CreateItemRequest
 	if err := c.BodyParser(&req); err != nil {
@@ -20,8 +24,9 @@ func (s *Server) CreateItem(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "name is required")
 	}
 
+	id := uuid.New().String()
 	err := s.Repository.Create(c.Context(), tracker.Item{
-		ID:   uuid.New().String(),
+		ID:   id,
 		Name: req.Name,
 	})
 	if err != nil {
@@ -29,5 +34,9 @@ func (s *Server) CreateItem(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError, "internal server error")
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{})
+	res := ItemRequest{
+		ID:   id,
+		Name: req.Name,
+	}
+	return c.Status(fiber.StatusCreated).JSON(CreateItemResponse{Item: res})
 }

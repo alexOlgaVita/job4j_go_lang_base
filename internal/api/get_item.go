@@ -5,11 +5,10 @@ import (
 	"github.com/gofiber/fiber/v2/log"
 )
 
-//
-//type ItemRequest struct {
-//	ID   string `json:"id"`
-//	Name string `json:"name"`
-//}
+type ItemRequest struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
 
 type GetItemResponse struct {
 	Item ItemRequest `json:"item"`

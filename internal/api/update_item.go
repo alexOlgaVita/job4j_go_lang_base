@@ -9,6 +9,10 @@ type UpdateItemRequest struct {
 	Name string `json:"name"`
 }
 
+type UpdateItemResponse struct {
+	Item ItemRequest `json:"item"`
+}
+
 func (s *Server) UpdateItem(c *fiber.Ctx) error {
 	var req UpdateItemRequest
 	name := c.Params("name")
@@ -22,12 +26,22 @@ func (s *Server) UpdateItem(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "name is required")
 	}
 
-	err := s.Repository.Update(c.Context(), name, req.Name)
+	item, err := s.Repository.Get(c.Context(), name)
+	if err != nil {
+		log.Errorw("s.Repository.Get", err)
+		return fiber.NewError(fiber.StatusInternalServerError, "internal server error")
+	}
+
+	err = s.Repository.Update(c.Context(), name, req.Name)
 
 	if err != nil {
 		log.Errorw("s.Repository.Update", err)
 		return fiber.NewError(fiber.StatusInternalServerError, "internal server error")
 	}
 
-	return c.Status(fiber.StatusNoContent).JSON(fiber.Map{})
+	res := ItemRequest{
+		ID:   item.ID,
+		Name: req.Name,
+	}
+	return c.Status(fiber.StatusOK).JSON(UpdateItemResponse{Item: res})
 }
