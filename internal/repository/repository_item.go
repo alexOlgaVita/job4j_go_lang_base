@@ -52,13 +52,39 @@ func (r *RepoPg) List(ctx context.Context) ([]tracker.Item, error) {
 	return items, nil
 }
 
-func (r *RepoPg) Get(ctx context.Context, id string) (tracker.Item, error) {
+func (r *RepoPg) Get(ctx context.Context, name string) (tracker.Item, error) {
 	var it tracker.Item
 	err := r.pool.QueryRow(
 		ctx,
-		`select id, name from items where id = $1`,
-		id,
+		`select id, name from items where name = $1`,
+		name,
 	).Scan(&it.ID, &it.Name)
 
 	return it, err
+}
+
+func (r *RepoPg) Update(ctx context.Context, name string, newName string) error {
+	_, err := r.pool.Exec(
+		ctx,
+		"UPDATE items SET name = $2 WHERE name = $1",
+		name, newName,
+	)
+	if err != nil {
+		return fmt.Errorf("r.pool.Exec: %w", err)
+	}
+
+	return nil
+}
+
+func (r *RepoPg) Delete(ctx context.Context, name string) error {
+	_, err := r.pool.Exec(
+		ctx,
+		"DELETE items WHERE name = $1",
+		name,
+	)
+	if err != nil {
+		return fmt.Errorf("r.pool.Exec: %w", err)
+	}
+
+	return nil
 }

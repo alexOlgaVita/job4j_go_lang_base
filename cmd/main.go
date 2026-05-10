@@ -2,12 +2,13 @@ package main
 
 import (
 	"context"
+	"github.com/gofiber/fiber/v2"
+	"job4j.ru/go-lang-base/internal/api"
 	"log"
 
 	"job4j.ru/go-lang-base/internal/config"
 	"job4j.ru/go-lang-base/internal/db"
 	"job4j.ru/go-lang-base/internal/repository"
-	"job4j.ru/go-lang-base/internal/tracker"
 )
 
 func main() {
@@ -30,13 +31,23 @@ func main() {
 
 	repo := repository.NewRepoPg(pool)
 
-	ui := tracker.UI{
-		In:    tracker.ConsoleInput{},
-		Out:   tracker.ConsoleOutput{},
-		Store: repo,
-	}
+	//ui := tracker.UI{
+	//	In:    tracker.ConsoleInput{},
+	//	Out:   tracker.ConsoleOutput{},
+	//	Store: repo,
+	//}
+	//
+	//if err := ui.Run(ctx); err != nil {
+	//	log.Fatal(err)
+	//}
 
-	if err := ui.Run(ctx); err != nil {
+	server := api.NewServer(repo)
+
+	app := fiber.New()
+	server.Route(app.Group("/api"))
+
+	err = app.Listen(":8080")
+	if err != nil {
 		log.Fatal(err)
 	}
 }
